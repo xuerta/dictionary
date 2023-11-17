@@ -11,12 +11,16 @@ class JsonEntry:
         self.entry = entry
         self.entry.temp = self.entry.latin + self.entry.combined_english_gloss[0]
         self.UUID = hashlib.sha1(bytes(self.entry.temp, 'utf-8'))
-        search_word = re.sub(r'\<\/*\w+\>', '', self.entry.latin)
-        self.entry.search = re.sub(r'[^a-zA-Z]+', '', search_word)
+        pattern = r'<sup.*?>(.*?)<\/sup>'
+        search_word = re.sub(pattern, '', self.entry.latin)
+        search_word = re.sub(r'\<\/*\w+\>', '', search_word)
+        #search_word = re.sub(r'\<\/*\w+\>', '', self.entry.latin)
+        search_word = re.sub(r'[^a-zA-Z]+', '', search_word)
+        self.entry.search = search_word
         self.entry.root = self.rootGen(self.entry.search)
         self.entry.ipa = self.phoneticize(self.entry.search)
-        
-
+    
+    
     def __str__(self):
         for i, element in enumerate(self.entry.combined_english_gloss):
             self.entry.combined_english_gloss[i] = element.replace('"', "&#34;")
